@@ -176,15 +176,15 @@ public class MenuUtama extends javax.swing.JFrame {
     private void execute() {
 
         //Icon Menu Utama
-        ImageIcon iconDashboard         = new ImageIcon(getClass().getResource("/Images/iconDashboard.png"));
-        ImageIcon iconKategori          = new ImageIcon(getClass().getResource("/Images/iconKategori.png"));
-        ImageIcon iconBagian            = new ImageIcon(getClass().getResource("/Images/iconBagian.png"));
-        ImageIcon iconSurat             = new ImageIcon(getClass().getResource("/Images/iconSurat.png"));
-        ImageIcon iconLogout            = new ImageIcon(getClass().getResource("/Images/iconLogout.png"));
+        ImageIcon iconDashboard = new ImageIcon(getClass().getResource("/Images/iconDashboard.png"));
+        ImageIcon iconKategori = new ImageIcon(getClass().getResource("/Images/iconKategori.png"));
+        ImageIcon iconBagian = new ImageIcon(getClass().getResource("/Images/iconBagian.png"));
+        ImageIcon iconSurat = new ImageIcon(getClass().getResource("/Images/iconSurat.png"));
+        ImageIcon iconLogout = new ImageIcon(getClass().getResource("/Images/iconLogout.png"));
 
         //Icon Sub Menu
-        ImageIcon iconsubSuratMasuk     = new ImageIcon(getClass().getResource("/Images/iconSuratMasuk.png"));
-        ImageIcon iconsubSuratKeluar    = new ImageIcon(getClass().getResource("/Images/iconSuratKeluar.png"));
+        ImageIcon iconsubSuratMasuk = new ImageIcon(getClass().getResource("/Images/iconSuratMasuk.png"));
+        ImageIcon iconsubSuratKeluar = new ImageIcon(getClass().getResource("/Images/iconSuratKeluar.png"));
 
         //Mengeksekusi Sub Menu
         MenuItem menuSubSuratMasuk = new MenuItem(null, true, iconsubSuratMasuk, "Surat Masuk", new ActionListener() {

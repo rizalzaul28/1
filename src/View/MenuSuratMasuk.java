@@ -134,7 +134,6 @@ public class MenuSuratMasuk extends javax.swing.JPanel {
         pusm.setVisible(true);
     }//GEN-LAST:event_jButton2ActionPerformed
 
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton2;
     private javax.swing.JComboBox<String> jComboBox1;

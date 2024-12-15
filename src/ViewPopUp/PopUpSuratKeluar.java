@@ -9,12 +9,14 @@ import Kelas.Kategori;
 import Kelas.SuratKeluar;
 import Kelas.TimedJOptionPane;
 import View.MenuSuratKeluar;
+import static ViewPopUp.PopUpTambahBagian.tf_No;
 import java.awt.Desktop;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Date;
@@ -45,8 +47,9 @@ public class PopUpSuratKeluar extends javax.swing.JDialog {
         cbBagianSurat();
 
         cb_Kategori.addActionListener(evt -> updateNoUrut());
-        cb_Bagian.addActionListener(evt -> updateNoUrut());
-        autoNo();
+        cb_Bagian.addActionListener(evt -> updateNoUrut()); 
+
+        autoId();
     }
 
     void cbKategoriSurat() {
@@ -93,6 +96,7 @@ public class PopUpSuratKeluar extends javax.swing.JDialog {
 
     private void updateNoUrut() {
         try {
+            // Periksa jika tidak ada kategori atau bagian yang dipilih
             if (cb_Kategori.getSelectedItem() == null || cb_Bagian.getSelectedItem() == null) {
                 tf_NoUrut.setText("");
                 return;
@@ -101,39 +105,48 @@ public class PopUpSuratKeluar extends javax.swing.JDialog {
             String kategori = cb_Kategori.getSelectedItem().toString();
             String bagian = cb_Bagian.getSelectedItem().toString();
 
+            // Pastikan kategori dan bagian valid
             if (kategori.equals("--Pilih Kategori Surat--") || bagian.equals("--Pilih Bagian Surat--")) {
                 tf_NoUrut.setText("");
                 return;
             }
 
+            // Ambil kode kategori dan kode bagian dari item yang dipilih
             String kodeKategori = kategori.split(" - ")[0];
             String kodeBagian = bagian.split(" - ")[0];
 
-            Bagian bg = new Bagian();
-            int noUrut = bg.AmbilNoSurat();
+            // Ambil nomor urut terakhir untuk bagian yang dipilih
+            SuratKeluar bg = new SuratKeluar();
+            int noUrut = bg.getNoMax(); // Sesuai metode AmbilNoSurat yang sudah diperbaiki
 
+            // Ambil tanggal untuk format nomor surat
             Date tanggalSekarang = tf_Tgl.getDate();
             if (tanggalSekarang == null) {
                 tf_NoUrut.setText("");
                 return;
             }
+
             int bulan = tanggalSekarang.getMonth() + 1;
             String bulanRomawi = getRomawi(bulan);
-
             int tahun = tanggalSekarang.getYear() + 1900;
 
-            String formattedNoUrut = String.format("%02d.%03d/%s/%s/%d", Integer.parseInt(kodeKategori), noUrut, kodeBagian, bulanRomawi, tahun);
+            // Format nomor urut sesuai dengan template
+            String formattedNoUrut = String.format("%02d.%03d/%s/%s/%d",
+                    Integer.parseInt(kodeKategori), noUrut, kodeBagian, bulanRomawi, tahun);
 
+            // Set nomor urut pada field
             tf_NoUrut.setText(formattedNoUrut);
 
         } catch (Exception e) {
             e.printStackTrace();
-            JOptionPane.showMessageDialog(this, "Gagal memperbarui nomor urut: " + e.getMessage(), "Kesalahan", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Gagal memperbarui nomor urut: " + e.getMessage(),
+                    "Kesalahan", JOptionPane.ERROR_MESSAGE);
         }
     }
 
     private String getRomawi(int bulan) {
-        String[] bulanRomawi = {"I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X", "XI", "XII"};
+        String[] bulanRomawi = {"I", "II",
+            "III", "IV", "V", "VI", "VII", "VIII", "IX", "X", "XI", "XII"};
         return bulanRomawi[bulan - 1];
     }
 
@@ -148,7 +161,8 @@ public class PopUpSuratKeluar extends javax.swing.JDialog {
             while (data.next()) {
                 String kodeBagian = data.getString("kode_bagian");
                 String namaBagian = data.getString("nama_bagian");
-                String item = kodeBagian + " - " + namaBagian;
+                String item
+                        = kodeBagian + " - " + namaBagian;
                 cb_Bagian.addItem(item);
 
                 if (selectedBagian != null && kodeBagian.equals(selectedBagian)) {
@@ -157,9 +171,10 @@ public class PopUpSuratKeluar extends javax.swing.JDialog {
             }
         } catch (Exception e) {
             e.printStackTrace();
-            JOptionPane.showMessageDialog(this, "Gagal memperbarui data Bagian: " + e.getMessage(), "Kesalahan", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Gagalmemperbarui data Bagian:" + e.getMessage(), "Kesalahan", JOptionPane.ERROR_MESSAGE
+            );
         }
-    }
+    } 
 
     public void refreshCbKategori(String selectedBagian) {
         try {
@@ -167,12 +182,16 @@ public class PopUpSuratKeluar extends javax.swing.JDialog {
             cb_Kategori.addItem("--Pilih Bagian Surat--");
 
             Kategori bg = new Kategori();
-            ResultSet data = bg.Tampil_CbKategoriSurat();
+            ResultSet data
+                    = bg.Tampil_CbKategoriSurat();
 
             while (data.next()) {
-                String kodeKategori = data.getString("kode_kategori");
-                String namaKategori = data.getString("nama_kategori");
-                String item = kodeKategori + " - " + namaKategori;
+                String kodeKategori
+                        = data.getString("kode_kategori");
+                String namaKategori
+                        = data.getString("nama_kategori");
+                String item = kodeKategori + " - "
+                        + namaKategori;
                 cb_Kategori.addItem(item);
 
                 if (selectedBagian != null && kodeKategori.equals(selectedBagian)) {
@@ -181,16 +200,17 @@ public class PopUpSuratKeluar extends javax.swing.JDialog {
             }
         } catch (Exception e) {
             e.printStackTrace();
-            JOptionPane.showMessageDialog(this, "Gagal memperbarui data Kategori: " + e.getMessage(), "Kesalahan", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Gagalmemperbarui data Kategori:" + e.getMessage(), "Kesalahan", JOptionPane.ERROR_MESSAGE
+            );
         }
     }
 
     private String getFileExtension(String fileName) {
         int lastDotIndex = fileName.lastIndexOf(".");
         if (lastDotIndex > 0 && lastDotIndex < fileName.length() - 1) {
-            return fileName.substring(lastDotIndex); // Mengambil ekstensi beserta titik (contoh: ".doc")
+            return fileName.substring(lastDotIndex);
         }
-        return ""; // Jika tidak ada ekstensi, kembalikan string kosong
+        return "";
     }
 
     /**
@@ -416,32 +436,48 @@ public class PopUpSuratKeluar extends javax.swing.JDialog {
                 timedPane.showTimedMessage("Nomor urut telah disalin ke Clipboard.", "Berhasil", JOptionPane.INFORMATION_MESSAGE, 1000);
             } else {
                 TimedJOptionPane timedPane = new TimedJOptionPane();
-                timedPane.showTimedMessage("Nomor urut kosong, tidak ada yang disalin.", "Kesalahan", JOptionPane.ERROR_MESSAGE, 1000);
+                timedPane.showTimedMessage("Nomor urut kosong, tidak ada yang disalin.", "Kesalahan", JOptionPane.ERROR_MESSAGE, 2000);
             }
         } catch (Exception e) {
             e.printStackTrace();
             javax.swing.JOptionPane.showMessageDialog(this, "Gagal menyalin teks.", "Kesalahan", javax.swing.JOptionPane.ERROR_MESSAGE);
         }
     }//GEN-LAST:event_bt_SalinActionPerformed
-    public File uploadedFile;
+
     private void bt_UploadActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bt_UploadActionPerformed
-        try {
-            JFileChooser fileChooser = new JFileChooser();
-            fileChooser.setDialogTitle("Pilih File untuk Surat Keluar");
+        JFileChooser chooser = new JFileChooser();
+        int result = chooser.showOpenDialog(this);
 
-            int result = fileChooser.showOpenDialog(this);
+        if (result == JFileChooser.APPROVE_OPTION) {
+            File selectedFile = chooser.getSelectedFile();
 
-            if (result == JFileChooser.APPROVE_OPTION) {
-                uploadedFile = fileChooser.getSelectedFile();
-                tf_Upload.setText(uploadedFile.getName());
+            String targetFolderPath = "File/FileSuratKeluar";
+            File targetFolder = new File(targetFolderPath);
 
-            } else {
-                TimedJOptionPane timedPane = new TimedJOptionPane();
-                timedPane.showTimedMessage("Tidak ada file yang dipilih.", "Kesalahan", JOptionPane.ERROR_MESSAGE, 1000);
+            if (!targetFolder.exists()) {
+                if (!targetFolder.mkdirs()) {
+                    System.out.println("Gagal membuat folder FileSurat!");
+                    return;
+                }
             }
-        } catch (Exception e) {
-            e.printStackTrace();
-            JOptionPane.showMessageDialog(this, "Terjadi kesalahan saat memilih file.", "Kesalahan", JOptionPane.ERROR_MESSAGE);
+
+            String fileBaseName = tf_NoUrut.getText().replace(".", "_").replace("/", "_");
+            String fileExtension = getFileExtension(selectedFile.getName());
+
+            File targetFile = new File(targetFolderPath, fileBaseName + fileExtension);
+            int count = 1;
+            while (targetFile.exists()) {
+                targetFile = new File(targetFolderPath, fileBaseName + "(" + count + ")" + fileExtension);
+                count++;
+            }
+
+            try {
+                Files.copy(selectedFile.toPath(), targetFile.toPath(), java.nio.file.StandardCopyOption.REPLACE_EXISTING);
+                tf_Upload.setText(targetFile.getAbsolutePath());
+            } catch (IOException e) {
+                TimedJOptionPane timedPane = new TimedJOptionPane();
+                timedPane.showTimedMessage("Gagal mengunggah file", null, JOptionPane.ERROR_MESSAGE, 1000);
+            }
         }
     }//GEN-LAST:event_bt_UploadActionPerformed
 
@@ -455,6 +491,7 @@ public class PopUpSuratKeluar extends javax.swing.JDialog {
             if (!kategori.equals("--Pilih Kategori Surat--")) {
                 kodetambah.setKategori(kategori.split(" - ")[0]);
             } else {
+
                 JOptionPane.showMessageDialog(this, "Pilih kategori surat terlebih dahulu!", "Kesalahan", JOptionPane.WARNING_MESSAGE);
                 return;
             }
@@ -499,29 +536,23 @@ public class PopUpSuratKeluar extends javax.swing.JDialog {
                 return;
             }
 
-            if (uploadedFile != null && uploadedFile.exists()) {
-                FileInputStream fis = null;
-                try {
-                    fis = new FileInputStream(uploadedFile);
-                } catch (FileNotFoundException ex) {
-                    Logger.getLogger(PopUpSuratKeluar.class.getName()).log(Level.SEVERE, null, ex);
-                }
-
-                // Ubah format nama file dan tambahkan ekstensi file
-                String fileExtension = getFileExtension(uploadedFile.getName());
+            File file = new File(tf_Upload.getText());
+            if (file.exists()) {
+                FileInputStream fis = new FileInputStream(file);
+                String fileExtension = getFileExtension(file.getName());
                 String formattedNamaFile = nomorSurat.replace(".", "_").replace("/", "_") + fileExtension;
-                kodetambah.setNama_file(formattedNamaFile); // Simpan nama file yang sudah diformat
                 kodetambah.setFile(fis);
+                kodetambah.setNama_file(formattedNamaFile);
             } else {
-                JOptionPane.showMessageDialog(this, "File tidak ditemukan atau belum dipilih!", "Kesalahan", JOptionPane.WARNING_MESSAGE);
+                JOptionPane.showMessageDialog(this, "File tidak ditemukan!", "Peringatan", JOptionPane.WARNING_MESSAGE);
                 return;
             }
 
-            kodetambah.TambahSuratKeluar();
-            autoNo();
+            kodetambah.KodeTambah();
+            autoId();
 
-            MenuSuratKeluar sk = new MenuSuratKeluar();
-            sk.loadTabel();
+            MenuSuratKeluar kt = new MenuSuratKeluar();
+            kt.loadTabel();
             suratKeluar.notifyDataChanged();
 
             dispose();
@@ -529,11 +560,96 @@ public class PopUpSuratKeluar extends javax.swing.JDialog {
         } catch (SQLException ex) {
             Logger.getLogger(PopUpSuratKeluar.class.getName()).log(Level.SEVERE, null, ex);
             JOptionPane.showMessageDialog(this, "Gagal menyimpan surat keluar: " + ex.getMessage(), "Kesalahan", JOptionPane.ERROR_MESSAGE);
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(PopUpSuratKeluar.class.getName()).log(Level.SEVERE, null, ex);
         }
     }//GEN-LAST:event_bt_SimpanActionPerformed
 
     private void bt_UbahActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bt_UbahActionPerformed
-        
+        try {
+            SuratKeluar kodeUbah = new SuratKeluar();
+
+            int idSuratKeluar = Integer.parseInt(lb_Id.getText());
+            SuratKeluar dataLama = kodeUbah.getDataLama(idSuratKeluar);
+
+            kodeUbah.setId_suratkeluar(idSuratKeluar);
+
+            String kategori = cb_Kategori.getSelectedItem().toString();
+            if (!kategori.equals("--Pilih Kategori Surat--")) {
+                kodeUbah.setKategori(kategori.split(" - ")[0]);
+            } else {
+                JOptionPane.showMessageDialog(this, "Pilih kategori surat terlebih dahulu!", "Kesalahan", JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+
+            String bagian = cb_Bagian.getSelectedItem().toString();
+            if (!bagian.equals("--Pilih Bagian Surat--")) {
+                kodeUbah.setBagian(bagian.split(" - ")[0]);
+            } else {
+                JOptionPane.showMessageDialog(this, "Pilih bagian surat terlebih dahulu!", "Kesalahan", JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+
+            java.util.Date tanggalDibuatUtil = tf_Tgl.getDate();
+            if (tanggalDibuatUtil != null) {
+                java.sql.Date tanggalDibuatSQL = new java.sql.Date(tanggalDibuatUtil.getTime());
+                kodeUbah.setTanggal_dibuat(tanggalDibuatSQL);
+            } else {
+                JOptionPane.showMessageDialog(this, "Tanggal tidak valid!", "Peringatan", JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+
+            kodeUbah.setPerihal(tf_Perihal.getText());
+            kodeUbah.setTujuan(tf_Tujuan.getText());
+
+            File file = new File(tf_Upload.getText().trim());
+            if (file.exists() && file.isFile()) {
+                FileInputStream fis = new FileInputStream(file);
+
+                // Ambil nama file lama tanpa ekstensi
+                String namaFileLama = dataLama.getNama_file();
+                if (namaFileLama != null && namaFileLama.contains(".")) {
+                    namaFileLama = namaFileLama.substring(0, namaFileLama.lastIndexOf("."));
+                }
+
+                // Ambil ekstensi file baru
+                String fileExtension = getFileExtension(file.getName());
+
+                // Gabungkan nama file lama dengan ekstensi file baru
+                String namaFileBaru = namaFileLama + "." + fileExtension;
+
+                // Set file baru dan nama file baru
+                kodeUbah.setFile(fis);
+                kodeUbah.setNama_file(namaFileBaru);
+            } else {
+                // Jika file tidak diubah, tetap gunakan file lama
+                String namaFileLama = dataLama.getNama_file();
+                if (namaFileLama != null) {
+                    kodeUbah.setNama_file(namaFileLama);
+                } else {
+                    JOptionPane.showMessageDialog(this, "Nama file lama tidak ditemukan!", "Kesalahan", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+            }
+
+            // Panggil method untuk update data
+            kodeUbah.KodeUbah();
+
+            // Perbarui tabel setelah pembaruan
+            MenuSuratKeluar ku = new MenuSuratKeluar();
+            ku.loadTabel();
+            suratKeluar.notifyDataChanged();
+
+            // Tutup dialog
+            dispose();
+
+        } catch (SQLException ex) {
+            Logger.getLogger(PopUpSuratKeluar.class.getName()).log(Level.SEVERE, null, ex);
+            JOptionPane.showMessageDialog(this, "Gagal mengubah surat: " + ex.getMessage(), "Kesalahan", JOptionPane.ERROR_MESSAGE);
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(PopUpSuratKeluar.class.getName()).log(Level.SEVERE, null, ex);
+            JOptionPane.showMessageDialog(this, "File tidak ditemukan: " + ex.getMessage(), "Kesalahan", JOptionPane.ERROR_MESSAGE);
+        }
     }//GEN-LAST:event_bt_UbahActionPerformed
 
     private void bt_HapusActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bt_HapusActionPerformed
@@ -543,17 +659,18 @@ public class PopUpSuratKeluar extends javax.swing.JDialog {
                 timedPane.showTimedMessage("Pilih data yang ingin dihapus!", null, JOptionPane.WARNING_MESSAGE, 1000);
                 return;
             }
-            int confirm = JOptionPane.showConfirmDialog(this, "Yakin ingin menghapus data ini? \n Ini akan menghapus semua data surat yang memiliki nomor urut yang sama!", "Konfirmasi", JOptionPane.YES_NO_OPTION);
+            int confirm = JOptionPane.showConfirmDialog(this, "Yakin ingin menghapus data ini?", "Konfirmasi", JOptionPane.YES_NO_OPTION);
             if (confirm == JOptionPane.YES_OPTION) {
 
                 SuratKeluar kodeHapus = new SuratKeluar();
                 kodeHapus.setId_suratkeluar(Integer.parseInt(lb_Id.getText()));
 
-                kodeHapus.HapusSuratKeluar();
+                kodeHapus.KodeHapus();
 
-                MenuSuratKeluar sk = new MenuSuratKeluar();
-                sk.loadTabel();
+                MenuSuratKeluar kh = new MenuSuratKeluar();
+                kh.loadTabel();
                 suratKeluar.notifyDataChanged();
+                dispose();
 
             }
         } catch (SQLException e) {
@@ -561,34 +678,47 @@ public class PopUpSuratKeluar extends javax.swing.JDialog {
     }//GEN-LAST:event_bt_HapusActionPerformed
 
     private void bt_LihatActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bt_LihatActionPerformed
-        try {
-            String namaFile = tf_Upload.getText();
-            if (namaFile == null || namaFile.isEmpty()) {
-                JOptionPane.showMessageDialog(this, "Nama file tidak tersedia.", "Kesalahan", JOptionPane.WARNING_MESSAGE);
-                return;
-            }
+//        try {
+//            String namaFile = tf_Upload.getText();
+//            if (namaFile == null || namaFile.isEmpty()) {
+//                JOptionPane.showMessageDialog(this, "Nama file tidak tersedia.", "Kesalahan", JOptionPane.WARNING_MESSAGE);
+//                return;
+//            }
+//
+//            SuratKeluar suratKeluar = new SuratKeluar();
+//            suratKeluar.setNama_file(namaFile);
+//            byte[] fileData = suratKeluar.BukaFile();
+//
+//            if (fileData != null) {
+//                File tempFile = new File(System.getProperty("java.io.tmpdir") + "/" + namaFile);
+//                FileOutputStream fos = new FileOutputStream(tempFile);
+//                fos.write(fileData);
+//                fos.close();
+//
+//                if (Desktop.isDesktopSupported()) {
+//                    Desktop.getDesktop().open(tempFile);
+//                } else {
+//                    JOptionPane.showMessageDialog(this, "Desktop tidak didukung pada sistem ini.", "Kesalahan", JOptionPane.ERROR_MESSAGE);
+//                }
+//            } else {
+//                JOptionPane.showMessageDialog(this, "File tidak ditemukan untuk surat ini.", "Informasi", JOptionPane.INFORMATION_MESSAGE);
+//            }
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//            JOptionPane.showMessageDialog(this, "Terjadi kesalahan saat membuka file: " + e.getMessage(), "Kesalahan", JOptionPane.ERROR_MESSAGE);
+//        }
+try {
+            String filePath = tf_Upload.getText().trim();
+            File file = new File(filePath);
 
-            SuratKeluar suratKeluar = new SuratKeluar();
-            suratKeluar.setNama_file(namaFile);
-            byte[] fileData = suratKeluar.BukaFile();
-
-            if (fileData != null) {
-                File tempFile = new File(System.getProperty("java.io.tmpdir") + "/" + namaFile);
-                FileOutputStream fos = new FileOutputStream(tempFile);
-                fos.write(fileData);
-                fos.close();
-
-                if (Desktop.isDesktopSupported()) {
-                    Desktop.getDesktop().open(tempFile);
-                } else {
-                    JOptionPane.showMessageDialog(this, "Desktop tidak didukung pada sistem ini.", "Kesalahan", JOptionPane.ERROR_MESSAGE);
-                }
+            if (file.exists()) {
+                Desktop.getDesktop().open(file);
             } else {
-                JOptionPane.showMessageDialog(this, "File tidak ditemukan untuk surat ini.", "Informasi", JOptionPane.INFORMATION_MESSAGE);
+                JOptionPane.showMessageDialog(this, "File tidak ditemukan!", "Error", JOptionPane.ERROR_MESSAGE);
             }
-        } catch (Exception e) {
-            e.printStackTrace();
-            JOptionPane.showMessageDialog(this, "Terjadi kesalahan saat membuka file: " + e.getMessage(), "Kesalahan", JOptionPane.ERROR_MESSAGE);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            JOptionPane.showMessageDialog(this, "Terjadi kesalahan: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         }
     }//GEN-LAST:event_bt_LihatActionPerformed
 
@@ -661,12 +791,11 @@ public class PopUpSuratKeluar extends javax.swing.JDialog {
     public static javax.swing.JTextField tf_Upload;
     // End of variables declaration//GEN-END:variables
 
-    private void autoNo() throws SQLException {
+    private void autoId() throws SQLException {
         SuratKeluar auto = new SuratKeluar();
-        int newID = auto.autoNoSurat();
-        String formattedNoUrut = String.format("%03d", newID);
-        lb_Id.setText(formattedNoUrut);
-        lb_Id.setEnabled(false);
+        int newID = auto.autoId();
+        lb_Id.setText(String.valueOf(newID));
+
     }
 
 }

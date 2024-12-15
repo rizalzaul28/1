@@ -23,7 +23,7 @@ public class MenuKategori extends javax.swing.JPanel {
     public MenuKategori() throws SQLException {
         initComponents();
         loadTabel();
-        autoNo();
+        autoId();
         reset();
     }
 
@@ -89,8 +89,6 @@ public class MenuKategori extends javax.swing.JPanel {
 
         jLabel1.setFont(new java.awt.Font("Sylfaen", 1, 24)); // NOI18N
         jLabel1.setText("Menu Kategori Surat");
-
-        lb_Id.setForeground(new java.awt.Color(255, 255, 255));
 
         jLabel2.setText("Kode Kategori");
 
@@ -198,14 +196,14 @@ public class MenuKategori extends javax.swing.JPanel {
     private void bt_TambahActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bt_TambahActionPerformed
         try {
 
-            Kategori kt = new Kelas.Kategori();
-            kt.setId(Integer.parseInt(lb_Id.getText()));
-            kt.setKode_kategori(tf_Kode.getText());
-            kt.setNama_kategori(tf_Nama.getText());
-            kt.KodeTambah();
+            Kategori kodeTambah = new Kelas.Kategori();
+            kodeTambah.setId(Integer.parseInt(lb_Id.getText()));
+            kodeTambah.setKode_kategori(tf_Kode.getText());
+            kodeTambah.setNama_kategori(tf_Nama.getText());
+            kodeTambah.KodeTambah();
             loadTabel();
             reset();
-            autoNo();
+            autoId();
 
         } catch (SQLException sQLException) {
         }
@@ -214,14 +212,14 @@ public class MenuKategori extends javax.swing.JPanel {
     private void bt_UbahActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bt_UbahActionPerformed
         try {
 
-            Kategori KodeUbah = new Kategori();
-            KodeUbah.setId(Integer.parseInt(lb_Id.getText()));
-            KodeUbah.setKode_kategori(tf_Kode.getText());
-            KodeUbah.setNama_kategori(tf_Nama.getText());
-            KodeUbah.KodeUbah();
+            Kategori kodeUbah = new Kategori();
+            kodeUbah.setId(Integer.parseInt(lb_Id.getText()));
+            kodeUbah.setKode_kategori(tf_Kode.getText());
+            kodeUbah.setNama_kategori(tf_Nama.getText());
+            kodeUbah.KodeUbah();
             loadTabel();
             reset();
-            autoNo();
+            autoId();
 
         } catch (SQLException sQLException) {
         }
@@ -243,11 +241,11 @@ public class MenuKategori extends javax.swing.JPanel {
 
             if (confirm == JOptionPane.YES_OPTION) {
 
-                Kategori kh = new Kategori();
-                kh.setId(Integer.parseInt(lb_Id.getText()));
-                kh.KodeHapus();
+                Kategori kodeHapus = new Kategori();
+                kodeHapus.setId(Integer.parseInt(lb_Id.getText()));
+                kodeHapus.KodeHapus();
                 loadTabel();
-                autoNo();
+                autoId();
                 reset();
 
             }
@@ -266,7 +264,6 @@ public class MenuKategori extends javax.swing.JPanel {
         tf_Nama.setText(nama);
     }//GEN-LAST:event_tb_KategoriMouseClicked
 
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton bt_Hapus;
     private javax.swing.JButton bt_Tambah;
@@ -282,11 +279,10 @@ public class MenuKategori extends javax.swing.JPanel {
     private javax.swing.JTextField tf_Nama;
     // End of variables declaration//GEN-END:variables
 
-    private void autoNo() throws SQLException {
+    private void autoId() throws SQLException {
         Kategori auto = new Kategori();
-        int newID = auto.autoNoSurat();
-        String formattedNoUrut = String.format("%03d", newID);
-        lb_Id.setText(formattedNoUrut);
+        int newID = auto.autoIdKategori();
+        lb_Id.setText(String.valueOf(newID));
     }
 
 }

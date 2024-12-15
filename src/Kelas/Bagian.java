@@ -15,7 +15,7 @@ import java.util.List;
  */
 public class Bagian {
 
-    private int id;
+    private int id, jumlah = 0;
     private String kode_bagian, nama_bagian, no_urut;
 
     private Connection conn;
@@ -82,6 +82,7 @@ public class Bagian {
         this.no_urut = no_urut;
     }
 
+    // Method untuk menambah data (KodeTambah)
     public void KodeTambah() {
         query = "INSERT INTO bagian (id, kode_bagian, nama_bagian, no_urut) VALUES (?,?,?,?)";
         try {
@@ -100,7 +101,7 @@ public class Bagian {
 
         } catch (SQLException sQLException) {
             TimedJOptionPane timedPane = new TimedJOptionPane();
-            timedPane.showTimedMessage("Bagian Surat gagal ditambahkan!", null, JOptionPane.ERROR_MESSAGE, 1000);
+            timedPane.showTimedMessage("Bagian Surat gagal ditambahkan!", null, JOptionPane.ERROR_MESSAGE, 3000);
         }
     }
 
@@ -125,7 +126,7 @@ public class Bagian {
 
         } catch (SQLException sQLException) {
             TimedJOptionPane timedPane = new TimedJOptionPane();
-            timedPane.showTimedMessage("Kategori Surat gagal diubah!", null, JOptionPane.ERROR_MESSAGE, 1000);
+            timedPane.showTimedMessage("Kategori Surat gagal diubah!", null, JOptionPane.ERROR_MESSAGE, 3000);
         }
     }
 
@@ -145,7 +146,7 @@ public class Bagian {
 
         } catch (Exception e) {
             TimedJOptionPane timedPane = new TimedJOptionPane();
-            timedPane.showTimedMessage("Kategori Surat gagal dihapus!", null, JOptionPane.ERROR_MESSAGE, 1000);
+            timedPane.showTimedMessage("Kategori Surat gagal dihapus!", null, JOptionPane.ERROR_MESSAGE, 3000);
         }
     }
 
@@ -157,7 +158,7 @@ public class Bagian {
             rs = st.executeQuery(query);
         } catch (SQLException sQLException) {
             TimedJOptionPane timedPane = new TimedJOptionPane();
-            timedPane.showTimedMessage("Data gagal ditampilkan", null, JOptionPane.ERROR_MESSAGE, 1000);
+            timedPane.showTimedMessage("Data Gagal Ditampilkan!", null, JOptionPane.ERROR_MESSAGE, 3000);
         }
         return rs;
     }
@@ -170,19 +171,21 @@ public class Bagian {
             st = conn.createStatement();
             rs = st.executeQuery(query);
         } catch (SQLException sQLException) {
-            JOptionPane.showMessageDialog(null, "Data Gagal Ditampilkan!");
+            TimedJOptionPane timedPane = new TimedJOptionPane();
+            timedPane.showTimedMessage("Data Gagal Ditampilkan!", null, JOptionPane.ERROR_MESSAGE, 3000);
         }
 
         return rs;
 
     }
 
-    // Method untuk menghasilkan nomor urut otomatis (autoNoSurat)
-    public int autoNoSurat() {
+    // Method untuk menghasilkan id otomatis (autoIdBagian)
+    public int autoIdBagian() {
         int newID = 1;
 
         try {
-            String query = "SELECT MAX(no_urut) AS max_id FROM bagian";
+
+            String query = "SELECT MAX(id) AS max_id FROM bagian";
             Statement st = conn.createStatement();
             ResultSet rs = st.executeQuery(query);
 
@@ -190,6 +193,7 @@ public class Bagian {
                 String lastNoUrut = rs.getString("max_id");
 
                 if (lastNoUrut != null && !lastNoUrut.isEmpty()) {
+
                     String numericPart = lastNoUrut.split("\\.")[0];
                     newID = Integer.parseInt(numericPart) + 1;
                 }
@@ -198,7 +202,8 @@ public class Bagian {
             rs.close();
             st.close();
         } catch (SQLException e) {
-            JOptionPane.showMessageDialog(null, "Gagal menghasilkan nomor urut baru!");
+            TimedJOptionPane timedPane = new TimedJOptionPane();
+            timedPane.showTimedMessage("Gagal menghasilkan nomor urut baru!", null, JOptionPane.ERROR_MESSAGE, 3000);
             e.printStackTrace();
         }
 
@@ -206,23 +211,56 @@ public class Bagian {
     }
 
     // Method untuk mengambil no terakhir
-    public int AmbilNoSurat() {
-        int noUrut = 1;
+    public int autoNoSBagian() {
+        int newID = 1;
+
         try {
-            String query = "SELECT MAX(CAST(no_urut AS UNSIGNED)) AS max_no FROM bagian";
-            PreparedStatement ps = conn.prepareStatement(query);
-            ResultSet rs = ps.executeQuery();
+
+            String query = "SELECT MAX(no_urut) AS max_no FROM bagian";
+            Statement st = conn.createStatement();
+            ResultSet rs = st.executeQuery(query);
 
             if (rs.next()) {
-                noUrut = rs.getInt("max_no"); // Ambil nilai maksimum
+                String lastNoUrut = rs.getString("max_no");
+
+                if (lastNoUrut != null && !lastNoUrut.isEmpty()) {
+
+                    String numericPart = lastNoUrut.split("\\.")[0];
+                    newID = Integer.parseInt(numericPart) + 1;
+                }
             }
 
             rs.close();
-            ps.close();
+            st.close();
         } catch (SQLException e) {
+            TimedJOptionPane timedPane = new TimedJOptionPane();
+            timedPane.showTimedMessage("Gagal menghasilkan nomor urut baru!", null, JOptionPane.ERROR_MESSAGE, 3000);
             e.printStackTrace();
         }
-        return noUrut;
+
+        return newID;
+    }
+
+    // Method untuk menampilkan jumlah Bagian
+    public int TampilJumlahBagian() {
+        query = "SELECT COUNT(*) AS jumlah FROM bagian";
+
+        try {
+            st = conn.createStatement();
+            rs = st.executeQuery(query);
+
+            if (rs.next()) {
+                jumlah = rs.getInt("jumlah");
+            }
+
+            rs.close();
+            st.close();
+        } catch (SQLException sQLException) {
+            JOptionPane.showMessageDialog(null, "Data gagal ditampilkan: " + sQLException.getMessage(),
+                    "Error", JOptionPane.ERROR_MESSAGE);
+        }
+
+        return jumlah;
     }
 
 }

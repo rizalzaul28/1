@@ -4,7 +4,6 @@ package Main;
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JPanel.java to edit this template
  */
-
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.event.ActionListener;
@@ -147,7 +146,6 @@ public class MenuItem extends javax.swing.JPanel {
         }
     }//GEN-LAST:event_pn_DasarMousePressed
 
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel lb_Icon;
@@ -171,7 +169,7 @@ public class MenuItem extends javax.swing.JPanel {
         }).start();
     }
 
-        private void showMenu() {
+    private void showMenu() {
         if (showing) {
             return;
         }
@@ -186,13 +184,11 @@ public class MenuItem extends javax.swing.JPanel {
         }).start();
     }
 
-        private void sleep() {
+    private void sleep() {
         try {
             Thread.sleep(20);
         } catch (Exception e) {
         }
     }
-        
-        
 
 }

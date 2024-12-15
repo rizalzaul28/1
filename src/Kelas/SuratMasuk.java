@@ -17,10 +17,10 @@ import javax.swing.table.DefaultTableModel;
 
 public class SuratMasuk {
 
-    public static String id_surat,kategori, bagian, asal_surat, perihal, file_data;
+    public static String id_surat, kategori, bagian, asal_surat, perihal, file_data;
 
     public static java.sql.Date tanggal_diterima;
-   // private static final String destinationPath = "./Upload/surat/"; // Ensure this is declared at the class level
+    // private static final String destinationPath = "./Upload/surat/"; // Ensure this is declared at the class level
 
     private Connection konek;
     private PreparedStatement ps;
@@ -40,8 +40,6 @@ public class SuratMasuk {
     public static void setId_surat(String id_surat) {
         SuratMasuk.id_surat = id_surat;
     }
-    
-    
 
     public static String getKategori() {
         return kategori;
@@ -90,9 +88,6 @@ public class SuratMasuk {
     public static void setTanggal_diterima(Date tanggal_diterima) {
         SuratMasuk.tanggal_diterima = tanggal_diterima;
     }
-
-  
-   
 
     public Connection getKonek() {
         return konek;

@@ -46,7 +46,8 @@ public class MenuBagian extends javax.swing.JPanel implements Bagian.DataChangeL
                     data.getString("id"),
                     data.getString("kode_bagian"),
                     data.getString("nama_bagian"),
-                    data.getString("no_urut"),});
+                    data.getString("no_urut")
+                });
             }
 
             data.close();
@@ -158,7 +159,9 @@ public class MenuBagian extends javax.swing.JPanel implements Bagian.DataChangeL
                 String kode = tb_Bagian.getValueAt(baris, 1).toString();
                 String nama = tb_Bagian.getValueAt(baris, 2).toString();
                 String no = tb_Bagian.getValueAt(baris, 3).toString();
+
                 PopUpTambahBagian tmk = new PopUpTambahBagian(null, true, bagian);
+
                 PopUpTambahBagian.lb_Id.setText(id);
                 PopUpTambahBagian.tf_Kode.setText(kode);
                 PopUpTambahBagian.tf_Nama.setText(nama);
@@ -169,7 +172,6 @@ public class MenuBagian extends javax.swing.JPanel implements Bagian.DataChangeL
             Logger.getLogger(MenuBagian.class.getName()).log(Level.SEVERE, null, ex);
         }
     }//GEN-LAST:event_tb_BagianMouseClicked
-
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton bt_Tambah;

@@ -4,10 +4,7 @@
  */
 package Kelas;
 
-import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.PreparedStatement;
@@ -24,7 +21,7 @@ import javax.swing.JOptionPane;
  */
 public class SuratKeluar {
 
-    int id_suratkeluar;
+    int id_suratkeluar, jumlah = 0;
     String kategori, bagian, nomor, perihal, tujuan, nama_file;
     java.sql.Date tanggal_dibuat;
     FileInputStream file;
@@ -133,7 +130,8 @@ public class SuratKeluar {
         this.file = file;
     }
 
-    public void TambahSuratKeluar() {
+    // Method untuk menambah data (KodeTambah)
+    public void KodeTambah() {
         query = "INSERT INTO suratkeluar (id_suratkeluar, kategori, bagian, nomor, tanggal_dibuat, perihal, tujuan, nama_file, file)"
                 + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
         try {
@@ -157,26 +155,44 @@ public class SuratKeluar {
             notifyDataChanged();
         } catch (SQLException e) {
             TimedJOptionPane timedPane = new TimedJOptionPane();
-            timedPane.showTimedMessage("Gagal menambahkan surat!: " + e.getMessage(), null, JOptionPane.ERROR_MESSAGE, 1000);
+            timedPane.showTimedMessage("Gagal menambahkan surat!: " + e.getMessage(), null, JOptionPane.ERROR_MESSAGE, 3000);
         }
     }
 
-    public void UbahSuratKeluar() {
-        query = "UPDATE suratkeluar SET kategori = ?, bagian = ?, nomor = ?, tanggal_dibuat = ?, perihal = ?, tujuan = ?, nama_file = ?, file = ? WHERE id_suratkeluar = ?";
+    // Method untuk mengubah data (KodeUbah)
+    public void KodeUbah() {
+        query = "UPDATE suratkeluar SET kategori = ?, bagian = ?, tanggal_dibuat = ?, perihal = ?, tujuan = ?, nama_file = ?, file = ? WHERE id_suratkeluar = ?";
 
         try {
             ps = conn.prepareStatement(query);
 
             ps.setString(1, kategori);
             ps.setString(2, bagian);
-            ps.setString(3, nomor);
-            ps.setDate(4, tanggal_dibuat);
-            ps.setString(5, perihal);
-            ps.setString(6, tujuan);
-            ps.setString(7, nama_file);
-            ps.setBlob(8, file);
-            ps.setInt(9, id_suratkeluar);
+            ps.setDate(3, tanggal_dibuat);
+            ps.setString(4, perihal);
+            ps.setString(5, tujuan);
 
+            if (file != null) {
+                // Jika file diubah, set nama_file dan file baru
+                ps.setString(6, nama_file);
+                ps.setBlob(7, file);
+            } else {
+                // Jika file tidak diubah, ambil nilai lama dari database
+                String querySelect = "SELECT nama_file, file FROM suratkeluar WHERE id_suratkeluar = ?";
+                PreparedStatement psSelect = conn.prepareStatement(querySelect);
+                psSelect.setInt(1, id_suratkeluar);
+                ResultSet rs = psSelect.executeQuery();
+
+                if (rs.next()) {
+                    ps.setString(6, rs.getString("nama_file"));
+                    ps.setBlob(7, rs.getBlob("file"));
+                }
+
+                rs.close();
+                psSelect.close();
+            }
+
+            ps.setInt(8, id_suratkeluar);
             ps.executeUpdate();
             ps.close();
 
@@ -184,11 +200,12 @@ public class SuratKeluar {
             timedPane.showTimedMessage("Surat berhasil diubah!", null, JOptionPane.INFORMATION_MESSAGE, 1000);
         } catch (SQLException e) {
             TimedJOptionPane timedPane = new TimedJOptionPane();
-            timedPane.showTimedMessage("Gagal mengubah surat!: " + e.getMessage(), null, JOptionPane.ERROR_MESSAGE, 1000);
+            timedPane.showTimedMessage("Gagal mengubah surat!: " + e.getMessage(), null, JOptionPane.ERROR_MESSAGE, 3000);
         }
     }
 
-    public void HapusSuratKeluar() {
+    // Method untuk menghapus data (KodeHapus)
+    public void KodeHapus() {
         query = "DELETE FROM suratkeluar WHERE id_suratkeluar = ?";
 
         try {
@@ -202,21 +219,41 @@ public class SuratKeluar {
             timedPane.showTimedMessage("Data surat keluar berhasil dihapus!", null, JOptionPane.INFORMATION_MESSAGE, 1000);
         } catch (SQLException e) {
             TimedJOptionPane timedPane = new TimedJOptionPane();
-            timedPane.showTimedMessage("Gagal menghapus surat keluar!: " + e.getMessage(), null, JOptionPane.ERROR_MESSAGE, 1000);
+            timedPane.showTimedMessage("Gagal menghapus surat keluar!: " + e.getMessage(), null, JOptionPane.ERROR_MESSAGE, 3000);
         }
     }
 
-    // Tambahkan parameter untuk filter kategori
-    // Tambahkan parameter untuk filter kategori
-    public ResultSet KodeTampil(String filterKategori) {
+    // Method untuk mengambil data lama
+    public SuratKeluar getDataLama(int idSuratKeluar) throws SQLException {
+        String query = "SELECT * FROM suratkeluar WHERE id_suratkeluar = ?";
+        try (PreparedStatement ps = conn.prepareStatement(query)) {
+            ps.setInt(1, idSuratKeluar);
+            ResultSet rs = ps.executeQuery();
+
+            if (rs.next()) {
+                SuratKeluar dataLama = new SuratKeluar();
+                dataLama.setId_suratkeluar(rs.getInt("id_suratkeluar"));
+                dataLama.setKategori(rs.getString("kategori"));
+                dataLama.setBagian(rs.getString("bagian"));
+                dataLama.setTanggal_dibuat(rs.getDate("tanggal_dibuat"));
+                dataLama.setPerihal(rs.getString("perihal"));
+                dataLama.setTujuan(rs.getString("tujuan"));
+                dataLama.setNama_file(rs.getString("nama_file"));
+                return dataLama;
+            } else {
+                throw new SQLException("Data surat keluar tidak ditemukan!");
+            }
+        }
+    }
+
+    // Method untuk memfilter data berdasarkan Kategori
+    public ResultSet KodeTampilByKategori(String filterKategori) {
         try {
             if (filterKategori == null || filterKategori.isEmpty()) {
-                // Query tanpa filter
                 query = "SELECT id_suratkeluar, kategori, bagian, nomor, tanggal_dibuat, perihal, tujuan, nama_file FROM suratkeluar";
                 PreparedStatement ps = conn.prepareStatement(query);
                 rs = ps.executeQuery();
             } else {
-                // Query dengan filter kategori
                 query = "SELECT id_suratkeluar, kategori, bagian, nomor, tanggal_dibuat, perihal, tujuan, nama_file FROM suratkeluar WHERE kategori = ?";
                 PreparedStatement ps = conn.prepareStatement(query);
                 ps.setString(1, filterKategori);
@@ -228,7 +265,99 @@ public class SuratKeluar {
         return rs;
     }
 
-    public int autoNoSurat() {
+    // Method untuk memfilter data berdasarkan Bagian
+    public ResultSet KodeTampilByBagian(String filterBagian) {
+        try {
+            if (filterBagian == null || filterBagian.isEmpty()) {
+                // Query tanpa filter
+                query = "SELECT id_suratkeluar, kategori, bagian, nomor, tanggal_dibuat, perihal, tujuan, nama_file FROM suratkeluar";
+                PreparedStatement ps = conn.prepareStatement(query);
+                rs = ps.executeQuery();
+            } else {
+                // Query dengan filter bagian
+                query = "SELECT id_suratkeluar, kategori, bagian, nomor, tanggal_dibuat, perihal, tujuan, nama_file FROM suratkeluar WHERE bagian = ?";
+                PreparedStatement ps = conn.prepareStatement(query);
+                ps.setString(1, filterBagian);
+                rs = ps.executeQuery();
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return rs;
+    }
+
+    // Method untuk memfilter data berdasarkan Tanggal
+    public ResultSet KodeTampilByTanggal(java.sql.Date tanggal) {
+        try {
+            query = "SELECT id_suratkeluar, kategori, bagian, nomor, tanggal_dibuat, perihal, tujuan, nama_file FROM suratkeluar WHERE tanggal_dibuat = ?";
+            PreparedStatement ps = conn.prepareStatement(query);
+            ps.setDate(1, tanggal);
+            rs = ps.executeQuery();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return rs;
+    }
+
+    // Method untuk menggabungkan filter
+    public ResultSet KodeTampilByFilters(String filterKategori, String filterBagian, java.sql.Date filterTanggal) {
+        try {
+            StringBuilder queryBuilder = new StringBuilder("SELECT id_suratkeluar, kategori, bagian, nomor, tanggal_dibuat, perihal, tujuan, nama_file FROM suratkeluar WHERE 1=1");
+
+            if (filterKategori != null && !filterKategori.isEmpty()) {
+                queryBuilder.append(" AND kategori = ?");
+            }
+            if (filterBagian != null && !filterBagian.isEmpty()) {
+                queryBuilder.append(" AND bagian = ?");
+            }
+            if (filterTanggal != null) {
+                queryBuilder.append(" AND tanggal_dibuat = ?");
+            }
+
+            PreparedStatement ps = conn.prepareStatement(queryBuilder.toString());
+
+            int index = 1;
+            if (filterKategori != null && !filterKategori.isEmpty()) {
+                ps.setString(index++, filterKategori);
+            }
+            if (filterBagian != null && !filterBagian.isEmpty()) {
+                ps.setString(index++, filterBagian);
+            }
+            if (filterTanggal != null) {
+                ps.setDate(index++, filterTanggal);
+            }
+
+            rs = ps.executeQuery();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return rs;
+    }
+
+    // Method untuk menampilkan jumlah Surat Keluar
+    public int TampilJumlahBagian() {
+        query = "SELECT COUNT(*) AS jumlah FROM suratkeluar";
+
+        try {
+            st = conn.createStatement();
+            rs = st.executeQuery(query);
+
+            if (rs.next()) {
+                jumlah = rs.getInt("jumlah");
+            }
+
+            rs.close();
+            st.close();
+        } catch (SQLException sQLException) {
+            JOptionPane.showMessageDialog(null, "Data gagal ditampilkan: " + sQLException.getMessage(),
+                    "Error", JOptionPane.ERROR_MESSAGE);
+        }
+
+        return jumlah;
+    }
+
+    // Method untuk membuat nomor id otomatis (autoId)
+    public int autoId() {
         int newID = 1;
 
         try {
@@ -255,6 +384,31 @@ public class SuratKeluar {
         return newID;
     }
 
+    // Method untuk mengambil nomor urut terakhir berdasarkan bagian
+    public int getNoMax() {
+        int maxNo = 0;
+
+        try {
+            String query = "SELECT MAX(no_urut) AS max_no FROM bagian";
+            Statement st = conn.createStatement();
+            ResultSet rs = st.executeQuery(query);
+
+            if (rs.next()) {
+                maxNo = rs.getInt("max_no");
+            }
+
+            rs.close();
+            st.close();
+        } catch (SQLException e) {
+            TimedJOptionPane timedPane = new TimedJOptionPane();
+            timedPane.showTimedMessage("Gagal mengambil angka tertinggi!", null, JOptionPane.ERROR_MESSAGE, 3000);
+            e.printStackTrace();
+        }
+
+        return maxNo;
+    }
+
+    // Method untuk membuka File
     public byte[] BukaFile() throws SQLException {
         byte[] IsiFile = null;
         query = "SELECT file FROM suratkeluar WHERE nama_file = ?";

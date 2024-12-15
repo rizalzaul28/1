@@ -4,6 +4,13 @@
  */
 package View;
 
+import Kelas.Bagian;
+import Kelas.Kategori;
+import Kelas.SuratKeluar;
+import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 /**
  *
  * @author rizan
@@ -15,6 +22,45 @@ public class MenuDashboard extends javax.swing.JPanel {
      */
     public MenuDashboard() {
         initComponents();
+        tampilJumlahKategoriSurat();
+        tampilJumlahBagianSurat();
+        tampilJumlahSuratKeluar();
+    }
+
+    void tampilJumlahKategoriSurat() {
+        try {
+            Kategori jumKategori = new Kategori();
+            int jumlahKode = jumKategori.TampilJumlahKategori();
+
+            lb_Kategori.setText(String.valueOf(jumlahKode));
+        } catch (SQLException ex) {
+            Logger.getLogger(MenuDashboard.class.getName()).log(Level.SEVERE, null, ex);
+            lb_Kategori.setText("Error");
+        }
+    }
+
+    void tampilJumlahBagianSurat() {
+        try {
+            Bagian jumBagian = new Bagian();
+            int jumlahKode = jumBagian.TampilJumlahBagian();
+
+            lb_Bagian.setText(String.valueOf(jumlahKode));
+        } catch (SQLException ex) {
+            Logger.getLogger(MenuDashboard.class.getName()).log(Level.SEVERE, null, ex);
+            lb_Bagian.setText("Error");
+        }
+    }
+
+    void tampilJumlahSuratKeluar() {
+        try {
+            SuratKeluar jumSuratKeluar = new SuratKeluar();
+            int jumlahKode = jumSuratKeluar.TampilJumlahBagian();
+
+            lb_SuratKeluar.setText(String.valueOf(jumlahKode));
+        } catch (SQLException ex) {
+            Logger.getLogger(MenuDashboard.class.getName()).log(Level.SEVERE, null, ex);
+            lb_SuratKeluar.setText("Error");
+        }
     }
 
     /**
@@ -27,27 +73,112 @@ public class MenuDashboard extends javax.swing.JPanel {
     private void initComponents() {
 
         pn_Main = new javax.swing.JPanel();
+        jLabel1 = new javax.swing.JLabel();
+        lb_Kategori = new javax.swing.JLabel();
+        lb_Bagian = new javax.swing.JLabel();
+        lb_SuratKeluar = new javax.swing.JLabel();
+        lb_SuratMasuk = new javax.swing.JLabel();
+        jLabel6 = new javax.swing.JLabel();
+        jLabel7 = new javax.swing.JLabel();
+        jLabel8 = new javax.swing.JLabel();
+        jLabel9 = new javax.swing.JLabel();
 
         setLayout(new java.awt.CardLayout());
 
-        pn_Main.setBackground(new java.awt.Color(0, 204, 204));
+        pn_Main.setBackground(new java.awt.Color(255, 255, 255));
+
+        jLabel1.setFont(new java.awt.Font("Book Antiqua", 1, 24)); // NOI18N
+        jLabel1.setText("Menu Dashboard");
+
+        lb_Kategori.setFont(new java.awt.Font("Sitka Heading", 0, 48)); // NOI18N
+        lb_Kategori.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lb_Kategori.setText("999");
+        lb_Kategori.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+
+        lb_Bagian.setFont(new java.awt.Font("Sitka Heading", 0, 48)); // NOI18N
+        lb_Bagian.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lb_Bagian.setText("999");
+        lb_Bagian.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+
+        lb_SuratKeluar.setFont(new java.awt.Font("Sitka Heading", 0, 48)); // NOI18N
+        lb_SuratKeluar.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lb_SuratKeluar.setText("999");
+        lb_SuratKeluar.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+
+        lb_SuratMasuk.setFont(new java.awt.Font("Sitka Heading", 0, 48)); // NOI18N
+        lb_SuratMasuk.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lb_SuratMasuk.setText("999");
+        lb_SuratMasuk.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+
+        jLabel6.setText("Kategori");
+
+        jLabel7.setText("Bagian");
+
+        jLabel8.setText("Surat Keluar");
+
+        jLabel9.setText("Surat Masuk");
 
         javax.swing.GroupLayout pn_MainLayout = new javax.swing.GroupLayout(pn_Main);
         pn_Main.setLayout(pn_MainLayout);
         pn_MainLayout.setHorizontalGroup(
             pn_MainLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 1104, Short.MAX_VALUE)
+            .addGroup(pn_MainLayout.createSequentialGroup()
+                .addGroup(pn_MainLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(pn_MainLayout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(jLabel1))
+                    .addGroup(pn_MainLayout.createSequentialGroup()
+                        .addGap(24, 24, 24)
+                        .addGroup(pn_MainLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(lb_Kategori, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel6))
+                        .addGap(18, 18, 18)
+                        .addGroup(pn_MainLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(lb_Bagian, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel7))
+                        .addGap(18, 18, 18)
+                        .addGroup(pn_MainLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(lb_SuratKeluar, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel8))
+                        .addGap(18, 18, 18)
+                        .addGroup(pn_MainLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel9)
+                            .addComponent(lb_SuratMasuk, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                .addContainerGap(229, Short.MAX_VALUE))
         );
         pn_MainLayout.setVerticalGroup(
             pn_MainLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 706, Short.MAX_VALUE)
+            .addGroup(pn_MainLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jLabel1)
+                .addGap(63, 63, 63)
+                .addGroup(pn_MainLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel6)
+                    .addComponent(jLabel7)
+                    .addComponent(jLabel8)
+                    .addComponent(jLabel9))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(pn_MainLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(lb_Kategori, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(lb_Bagian, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(lb_SuratKeluar, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(lb_SuratMasuk, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(402, Short.MAX_VALUE))
         );
 
         add(pn_Main, "card2");
     }// </editor-fold>//GEN-END:initComponents
 
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel6;
+    private javax.swing.JLabel jLabel7;
+    private javax.swing.JLabel jLabel8;
+    private javax.swing.JLabel jLabel9;
+    private javax.swing.JLabel lb_Bagian;
+    private javax.swing.JLabel lb_Kategori;
+    private javax.swing.JLabel lb_SuratKeluar;
+    private javax.swing.JLabel lb_SuratMasuk;
     private javax.swing.JPanel pn_Main;
     // End of variables declaration//GEN-END:variables
 }

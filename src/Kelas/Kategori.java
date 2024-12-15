@@ -17,7 +17,7 @@ import javax.swing.JOptionPane;
  */
 public class Kategori {
 
-    int id;
+    int id, jumlah = 0;
     String kode_kategori, nama_kategori;
 
     private Connection conn;
@@ -55,6 +55,7 @@ public class Kategori {
         this.nama_kategori = nama_kategori;
     }
 
+    // Method untuk menambah data (KodeTambah)
     public void KodeTambah() {
         query = "INSERT INTO kategori (id, kode_kategori,nama_kategori) VALUES (?,?,?)";
         try {
@@ -68,10 +69,11 @@ public class Kategori {
             timedPane.showTimedMessage("Kategori Surat berhasil ditambahkan!", null, JOptionPane.INFORMATION_MESSAGE, 1000);
         } catch (SQLException sQLException) {
             TimedJOptionPane timedPane = new TimedJOptionPane();
-            timedPane.showTimedMessage("Kategori Surat gagal ditampilkan!", null, JOptionPane.ERROR_MESSAGE, 1000);
+            timedPane.showTimedMessage("Kategori Surat gagal ditampilkan!", null, JOptionPane.ERROR_MESSAGE, 3000);
         }
     }
 
+    // Method untuk mengubah data (KodeUbah)
     public void KodeUbah() {
         query = "UPDATE kategori SET kode_kategori = ?, nama_kategori = ? WHERE id = ?";
 
@@ -88,12 +90,12 @@ public class Kategori {
             timedPane.showTimedMessage("Kategori Surat berhasil diubah!", null, JOptionPane.INFORMATION_MESSAGE, 1000);
         } catch (SQLException sQLException) {
             TimedJOptionPane timedPane = new TimedJOptionPane();
-            timedPane.showTimedMessage("Kategori Surat gagal diubah!", null, JOptionPane.ERROR_MESSAGE, 1000);
+            timedPane.showTimedMessage("Kategori Surat gagal diubah!", null, JOptionPane.ERROR_MESSAGE, 3000);
         }
     }
 
+    // Method untuk menghapus data (KodeHapus)
     public void KodeHapus() {
-
         query = "DELETE FROM kategori WHERE id = ?";
 
         try {
@@ -105,11 +107,12 @@ public class Kategori {
             timedPane.showTimedMessage("Kode Surat berhasil dihapus!", null, JOptionPane.INFORMATION_MESSAGE, 1000);
         } catch (Exception e) {
             TimedJOptionPane timedPane = new TimedJOptionPane();
-            timedPane.showTimedMessage("Kode Surat gagal dihapus!", null, JOptionPane.ERROR_MESSAGE, 1000);
+            timedPane.showTimedMessage("Kode Surat gagal dihapus!", null, JOptionPane.ERROR_MESSAGE, 3000);
         }
 
     }
 
+    // Method untuk menampilkan data (KodeTampil)
     public ResultSet KodeTampil() {
         query = "SELECT * FROM kategori";
 
@@ -118,12 +121,13 @@ public class Kategori {
             rs = st.executeQuery(query);
         } catch (SQLException sQLException) {
             TimedJOptionPane timedPane = new TimedJOptionPane();
-            timedPane.showTimedMessage("Data gagal ditampilkan", null, JOptionPane.ERROR_MESSAGE, 1000);
+            timedPane.showTimedMessage("Data gagal ditampilkan", null, JOptionPane.ERROR_MESSAGE, 3000);
         }
 
         return rs;
     }
 
+    // Method untuk menampilkan data (cb_Kategori)
     public ResultSet Tampil_CbKategoriSurat() {
 
         try {
@@ -131,14 +135,16 @@ public class Kategori {
             st = conn.createStatement();
             rs = st.executeQuery(query);
         } catch (SQLException sQLException) {
-            JOptionPane.showMessageDialog(null, "Data Gagal Ditampilkan!");
+            TimedJOptionPane timedPane = new TimedJOptionPane();
+            timedPane.showTimedMessage("Data Gagal Ditampilkan!", null, JOptionPane.ERROR_MESSAGE, 3000);
         }
 
         return rs;
 
     }
 
-    public int autoNoSurat() {
+    // Method untuk membuat nomor id otomatis (autoIdKategori)
+    public int autoIdKategori() {
         int newID = 1;
 
         try {
@@ -160,11 +166,34 @@ public class Kategori {
             rs.close();
             st.close();
         } catch (SQLException e) {
-            JOptionPane.showMessageDialog(null, "Gagal menghasilkan nomor urut baru!");
+            TimedJOptionPane timedPane = new TimedJOptionPane();
+            timedPane.showTimedMessage("Gagal menghasilkan nomor urut baru!", null, JOptionPane.ERROR_MESSAGE, 3000);
             e.printStackTrace();
         }
 
         return newID;
+    }
+
+    // Method untuk menampilkan jumlah Kategori
+    public int TampilJumlahKategori() {
+        query = "SELECT COUNT(*) AS jumlah FROM kategori";
+
+        try {
+            st = conn.createStatement();
+            rs = st.executeQuery(query);
+
+            if (rs.next()) {
+                jumlah = rs.getInt("jumlah");
+            }
+
+            rs.close();
+            st.close();
+        } catch (SQLException sQLException) {
+            JOptionPane.showMessageDialog(null, "Data gagal ditampilkan: " + sQLException.getMessage(),
+                    "Error", JOptionPane.ERROR_MESSAGE);
+        }
+
+        return jumlah;
     }
 
 }

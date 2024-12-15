@@ -5,6 +5,7 @@
 package ViewPopUp;
 
 import Kelas.Bagian;
+import Kelas.SuratKeluar;
 import Kelas.TimedJOptionPane;
 import View.MenuBagian;
 import java.sql.SQLException;
@@ -21,6 +22,8 @@ public class PopUpTambahBagian extends javax.swing.JDialog {
     private Bagian bagian;
     private MenuBagian menuBagian;
 
+    String kodeBagian;
+
     /**
      * Creates new form PopUpTambahBagian
      */
@@ -29,6 +32,8 @@ public class PopUpTambahBagian extends javax.swing.JDialog {
         initComponents();
         this.bagian = bagian;
         Default_tf();
+        autoId();
+
         autoNo();
     }
 
@@ -41,6 +46,7 @@ public class PopUpTambahBagian extends javax.swing.JDialog {
     void reset() {
         tf_Kode.setText(null);
         tf_Nama.setText(null);
+        // tf_No.setText(null);
     }
 
     /**
@@ -80,8 +86,6 @@ public class PopUpTambahBagian extends javax.swing.JDialog {
 
         jLabel4.setFont(new java.awt.Font("Segoe UI Semibold", 0, 14)); // NOI18N
         jLabel4.setText("No Urut Terakhir");
-
-        lb_Id.setForeground(new java.awt.Color(255, 255, 255));
 
         bt_Tambah.setText("Tambah");
         bt_Tambah.addActionListener(new java.awt.event.ActionListener() {
@@ -211,13 +215,14 @@ public class PopUpTambahBagian extends javax.swing.JDialog {
     private void bt_TambahActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bt_TambahActionPerformed
         try {
 
-            Bagian bg = new Kelas.Bagian();
-            bg.setKode_bagian(tf_Kode.getText());
-            bg.setNama_bagian(tf_Nama.getText());
-            bg.setNo_urut(tf_No.getText());
-            bg.KodeTambah();
+            Bagian kodeTambah = new Kelas.Bagian();
+            kodeTambah.setId(Integer.parseInt(lb_Id.getText()));
+            kodeTambah.setKode_bagian(tf_Kode.getText());
+            kodeTambah.setNama_bagian(tf_Nama.getText());
+            kodeTambah.setNo_urut(tf_No.getText());
+            kodeTambah.KodeTambah();
             Default_tf();
-            autoNo();
+            autoId();
 
             MenuBagian menuBagian = new MenuBagian();
             menuBagian.loadTabel();
@@ -233,14 +238,13 @@ public class PopUpTambahBagian extends javax.swing.JDialog {
     private void bt_UbahActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bt_UbahActionPerformed
         try {
 
-            Bagian KodeUbah = new Bagian();
-            KodeUbah.setId(Integer.parseInt(lb_Id.getText()));
-            KodeUbah.setKode_bagian(tf_Kode.getText());
-            KodeUbah.setNama_bagian(tf_Nama.getText());
-            KodeUbah.setNo_urut(tf_No.getText());
-            KodeUbah.KodeUbah();
+            Bagian kodeUbah = new Bagian();
+            kodeUbah.setId(Integer.parseInt(lb_Id.getText()));
+            kodeUbah.setKode_bagian(tf_Kode.getText());
+            kodeUbah.setNama_bagian(tf_Nama.getText());
+            kodeUbah.setNo_urut(tf_No.getText());
+            kodeUbah.KodeUbah();
             Default_tf();
-            autoNo();
 
             MenuBagian menuBagian = new MenuBagian();
             menuBagian.loadTabel();
@@ -267,10 +271,9 @@ public class PopUpTambahBagian extends javax.swing.JDialog {
 
             if (confirm == JOptionPane.YES_OPTION) {
 
-                Bagian kh = new Bagian();
-                kh.setId(Integer.parseInt(lb_Id.getText()));
-                kh.KodeHapus();
-                autoNo();
+                Bagian kodeHapus = new Bagian();
+                kodeHapus.setId(Integer.parseInt(lb_Id.getText()));
+                kodeHapus.KodeHapus();
                 Default_tf();
 
                 MenuBagian menuBagian = new MenuBagian();
@@ -332,7 +335,6 @@ public class PopUpTambahBagian extends javax.swing.JDialog {
         });
     }
 
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton bt_Hapus;
     private javax.swing.JButton bt_Reset;
@@ -351,12 +353,21 @@ public class PopUpTambahBagian extends javax.swing.JDialog {
     // End of variables declaration//GEN-END:variables
 
     private void autoNo() throws SQLException {
+        // Pastikan parameter kodeBagian diambil sesuai data yang dipilih
         Bagian auto = new Bagian();
-        int newID = auto.autoNoSurat();
-        String formattedNoUrut = String.format("%03d", newID);
+        int newID = auto.autoNoSBagian(); // Ambil nomor urut baru berdasarkan kode bagian
+        String formattedNoUrut = String.format("%03d", newID); // Format ke tiga digit (001, 002, dst.)
+
+        // Set nilai ke text field
         tf_No.setText(formattedNoUrut);
-        tf_No.setEditable(false);
-        tf_No.setEnabled(false);
+       /** tf_No.setEditable(false); // Nonaktifkan pengeditan oleh user
+        tf_No.setEnabled(false); */ // Nonaktifkan input oleh user
+    }
+
+    private void autoId() throws SQLException {
+        Bagian auto = new Bagian();
+        int newID = auto.autoIdBagian();
+        lb_Id.setText(String.valueOf(newID));
     }
 
 }
