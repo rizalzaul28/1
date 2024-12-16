@@ -364,7 +364,7 @@ public class PopUpTambahBagian extends javax.swing.JDialog {
         tf_No.setEnabled(false); */ // Nonaktifkan input oleh user
     }
 
-    private void autoId() throws SQLException {
+        private void autoId() throws SQLException {
         Bagian auto = new Bagian();
         int newID = auto.autoIdBagian();
         lb_Id.setText(String.valueOf(newID));
