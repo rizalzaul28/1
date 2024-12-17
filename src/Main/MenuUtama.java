@@ -170,7 +170,7 @@ public class MenuUtama extends javax.swing.JFrame {
     private javax.swing.JPanel pn_Menu;
     private javax.swing.JPanel pn_Navbar;
     private javax.swing.JPanel pn_Sidebar;
-    private javax.swing.JPanel pn_Utama;
+    public static javax.swing.JPanel pn_Utama;
     // End of variables declaration//GEN-END:variables
 
     private void execute() {

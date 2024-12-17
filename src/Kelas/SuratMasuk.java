@@ -215,46 +215,46 @@ public class SuratMasuk {
         }
     }
 
-    public static void getDataDetail(DefaultTableModel model, String id_surat, Connection konek) {
-        model.setRowCount(0);
-        String sql = "SELECT id_surat, kategori, bagian, asal_surat, perihal, tanggal_diterima, file_data "
-                + "FROM surat_masuk WHERE id_surat = ?";
-        PreparedStatement ps = null;
-        ResultSet rs = null;
-
-        try {
-            ps = konek.prepareStatement(sql);
-            ps.setString(1, id_surat);
-            rs = ps.executeQuery();
-
-            while (rs.next()) {
-                String id = rs.getString("id_surat");
-                String kategori = rs.getString("kategori");
-                String bagian = rs.getString("bagian");
-                String asalsurat = rs.getString("asal_surat");
-                String perihal = rs.getString("perihal");
-                String tanggalDiterima = rs.getString("tanggal_diterima");
-                String fileData = rs.getString("file_data");
-
-                model.addRow(new Object[]{id, kategori, bagian, asalsurat, perihal, tanggalDiterima, fileData});
-            }
-        } catch (SQLException e) {
-            JOptionPane.showMessageDialog(null, "Failed to retrieve data");
-            Logger.getLogger(SuratMasuk.class.getName()).log(Level.SEVERE, null, e);
-        } finally {
-            try {
-                if (rs != null) {
-                    rs.close();
-                }
-                if (ps != null) {
-                    ps.close();
-                }
-            } catch (SQLException e) {
-                JOptionPane.showMessageDialog(null, "Error on closing the connection");
-                Logger.getLogger(SuratMasuk.class.getName()).log(Level.SEVERE, null, e);
-            }
-        }
-    }
+//    public static void getDataDetail(DefaultTableModel model, String id_surat, Connection konek) {
+//        model.setRowCount(0);
+//        String sql = "SELECT id_surat, kategori, bagian, asal_surat, perihal, tanggal_diterima, file_data "
+//                + "FROM surat_masuk WHERE id_surat = ?";
+//        PreparedStatement ps = null;
+//        ResultSet rs = null;
+//
+//        try {
+//            ps = konek.prepareStatement(sql);
+//            ps.setString(1, id_surat);
+//            rs = ps.executeQuery();
+//
+//            while (rs.next()) {
+//                String id = rs.getString("id_surat");
+//                String kategori = rs.getString("kategori");
+//                String bagian = rs.getString("bagian");
+//                String asalsurat = rs.getString("asal_surat");
+//                String perihal = rs.getString("perihal");
+//                String tanggalDiterima = rs.getString("tanggal_diterima");
+//                String fileData = rs.getString("file_data");
+//
+//                model.addRow(new Object[]{id, kategori, bagian, asalsurat, perihal, tanggalDiterima, fileData});
+//            }
+//        } catch (SQLException e) {
+//            JOptionPane.showMessageDialog(null, "Failed to retrieve data");
+//            Logger.getLogger(SuratMasuk.class.getName()).log(Level.SEVERE, null, e);
+//        } finally {
+//            try {
+//                if (rs != null) {
+//                    rs.close();
+//                }
+//                if (ps != null) {
+//                    ps.close();
+//                }
+//            } catch (SQLException e) {
+//                JOptionPane.showMessageDialog(null, "Error on closing the connection");
+//                Logger.getLogger(SuratMasuk.class.getName()).log(Level.SEVERE, null, e);
+//            }
+//        }
+//    }
 
     public String otoID() {
         // Menggunakan LocalDate untuk mendapatkan tanggal saat ini dalam format yyyyMMdd
